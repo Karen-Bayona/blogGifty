@@ -1,10 +1,12 @@
 const express = require('express');
 const mongoose = require('mongoose');
+const authRutas = require('./rutas/authRutas');
 require('dotenv').config();
 
 const app = express();
 // Para que el servidor entienda datos en formato JSON
 app.use(express.json());
+app.use('/api/auth', authRutas);
 // Verificar que el servidor funciona
 
 mongoose.connect(process.env.MONGODB_URI)

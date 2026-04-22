@@ -1,28 +1,27 @@
 const usuario = require('../modelos/usuario');
 const bcrypt = require('bcryptjs');
 
-//Registrar un nuevo usuario
 exports.registrarUsuario = async (req, res) => {
     try {
         const { email, password } = req.body;
 
-        // Verificar si el usuario ya existe
-        let usuario = await usuario.findOne({ email });
-        if (usuario) {
+        //Verificar si el usuario ya existe 
+        let usuarioExistente = await usuario.findOne({ email });
+        if (usuarioExistente) {
             return res.status(400).json({ msg: 'El usuario ya existe' });
         }
 
         // Crear el nuevo usuario
-        usuario = new usuario({ email, password });
+        const nuevoUsuario = new usuario({ email, password });
 
-        // Encriptar la contraseña 
+        // 3. Encriptar la contraseña
         const salt = await bcrypt.genSalt(10);
-        usuario.password = await bcrypt.hash(password, salt);
+        nuevoUsuario.password = await bcrypt.hash(password, salt);
 
-        // Guardar en la BD
-        await usuario.save();
+        // 4. Guardar en la BD
+        await nuevoUsuario.save();
 
-        res.status(201).json({ msg: 'Usuario creado exitosamente' });
+        res.status(201).json({ msg: 'Usuario creado exitosamente con contraseña segura' });
 
     } catch (error) {
         console.error(error);
