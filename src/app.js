@@ -2,14 +2,25 @@ const express = require('express');
 const mongoose = require('mongoose');
 const authRutas = require('./rutas/authRutas');
 const errorMiddleware = require('./middlewares/errorMiddleware');
+const helmet = require('helmet');
+const cors = require('cors');
 require('dotenv').config();
 
+//Seguridad de Infraestructura
+app.use(helmet()); // Ayuda a proteger de ataques web conocidos 
+app.use(cors());   // Permite que aplicaciones externas se conecten
+
+conectarDB();
+app.use(express.json());
 
 const app = express();
+
 // Para que el servidor entienda datos en formato JSON
 app.use(express.json());
-app.use('/api/auth', authRutas);
+
 // Verificar que el servidor funciona
+app.use('/api/auth', authRutas);
+
 app.use(errorMiddleware);
 
 mongoose.connect(process.env.MONGODB_URI)
