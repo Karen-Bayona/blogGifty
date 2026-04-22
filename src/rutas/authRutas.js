@@ -3,13 +3,13 @@ const router = express.Router();
 const authControlador = require('../controladores/authControlador');
 const authMiddleware = require('../middlewares/authMiddleware');
 
-// Ruta para registrar usuario: POST http://localhost:3000/api/auth/registro
+// Registro
 router.post('/registro', authControlador.registrarUsuario);
 
-// Ruta para Login: POST http://localhost:3000/api/auth/login
+// Login
 router.post('/login', authControlador.iniciarSesion);
 
-// Ruta de Perfil: GET http://localhost:3000/api/auth/perfil
+// Perfil (Ruta Protegida)
 router.get('/perfil', authMiddleware, authControlador.usuarioAutenticado);
 
 module.exports = router;

@@ -32,28 +32,22 @@ exports.registrarUsuario = async (req, res) => {
     }
 };
 
-//Login
+// Login
 exports.iniciarSesion = async (req, res) => {
     try {
         const { email, password } = req.body;
-
-        // Buscar al usuario por email
         const user = await usuario.findOne({ email });
 
         if (!user) {
             return res.status(400).json({ msg: 'Credenciales inválidas' });
         }
 
-        // Comparar la contraseña
         const esCorrecto = await bcrypt.compare(password, user.password);
         if (!esCorrecto) {
             return res.status(400).json({ msg: 'Credenciales inválidas' });
         }
 
-        // Generar el Token
-        const payload = {
-            usuario: { id: user.id }
-        };
+        const payload = { usuario: { id: user.id } };
 
         jwt.sign(
             payload,
@@ -61,7 +55,7 @@ exports.iniciarSesion = async (req, res) => {
             { expiresIn: '1h' },
             (err, token) => {
                 if (err) throw err;
-                res.json({ token }); //Token generado
+                res.json({ token });
             }
         );
 
@@ -69,16 +63,16 @@ exports.iniciarSesion = async (req, res) => {
         console.error(error);
         res.status(500).send('Error en el servidor');
     }
+}; 
 
-    // Obtener usuario autenticado
-    exports.usuarioAutenticado = async (req, res) => {
-        try {
-            // Buscamos al usuario por ID, pero usamos .select('-password') para no enviar la contraseña 
-            const usuario = await usuario.findById(req.usuario.id).select('-password');
-            res.json({ usuario });
-        } catch (error) {
-            console.error(error);
-            res.status(500).send('Error al obtener el perfil');
-        }
-    };
+// Obtener usuario autenticado 
+exports.usuarioAutenticado = async (req, res) => {
+    try {
+        // Usamos el modelo 'usuario' importado arriba
+        const userLogueado = await usuario.findById(req.usuario.id).select('-password');
+        res.json({ usuario: userLogueado });
+    } catch (error) {
+        console.error(error);
+        res.status(500).send('Error al obtener el perfil');
+    }
 };
