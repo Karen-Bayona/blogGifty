@@ -1,6 +1,9 @@
 const usuario = require('../modelos/usuario');
 const bcrypt = require('bcryptjs');
+const jwt = require('jsonwebtoken');
 
+
+//Registrar Usuario
 exports.registrarUsuario = async (req, res) => {
     try {
         const { email, password } = req.body;
@@ -26,5 +29,39 @@ exports.registrarUsuario = async (req, res) => {
     } catch (error) {
         console.error(error);
         res.status(500).send('Error al registrar usuario');
+    }
+};
+
+//Login
+exports.iniciarSesion = async (req, res) => {
+    try {
+        const { email, password } = req.body;
+
+        // Verificar si el usuario existe
+        let usuario = await Usuario.findOne({ email });
+        if (!usuario) {
+            return res.status(400).json({ msg: 'Credenciales inválidas' });
+        }
+
+        // Comparar la contraseña con el Hash de la base de datos
+        const esCorrecto = await bcrypt.compare(password, usuario.password);
+        if (!esCorrecto) {
+            return res.status(400).json({ msg: 'Credenciales inválidas' });
+        }
+
+        // Crear el Token JWT
+        const payload = {
+            usuario: { id: usuario.id }
+        };
+
+        // El token expira en 2 horas y usa una palabra secreta del .env
+        jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: '2h' }, (err, token) => {
+            if (err) throw err;
+            res.json({ token });
+        });
+
+    } catch (error) {
+        console.error(error);
+        res.status(500).send('Error en el servidor');
     }
 };
