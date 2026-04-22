@@ -37,28 +37,33 @@ exports.iniciarSesion = async (req, res) => {
     try {
         const { email, password } = req.body;
 
-        // Verificar si el usuario existe
-        let usuario = await Usuario.findOne({ email });
-        if (!usuario) {
+        // Buscar al usuario por email
+        const user = await usuario.findOne({ email }); 
+        
+        if (!user) {
             return res.status(400).json({ msg: 'Credenciales inválidas' });
         }
 
-        // Comparar la contraseña con el Hash de la base de datos
-        const esCorrecto = await bcrypt.compare(password, usuario.password);
+        // Comparar la contraseña
+        const esCorrecto = await bcrypt.compare(password, user.password);
         if (!esCorrecto) {
             return res.status(400).json({ msg: 'Credenciales inválidas' });
         }
 
-        // Crear el Token JWT
+        // Generar el Token
         const payload = {
-            usuario: { id: usuario.id }
+            usuario: { id: user.id }
         };
 
-        // El token expira en 2 horas y usa una palabra secreta del .env
-        jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: '2h' }, (err, token) => {
-            if (err) throw err;
-            res.json({ token });
-        });
+        jwt.sign(
+            payload, 
+            process.env.JWT_SECRET, 
+            { expiresIn: '1h' }, 
+            (err, token) => {
+                if (err) throw err;
+                res.json({ token }); //Token generado
+            }
+        );
 
     } catch (error) {
         console.error(error);
