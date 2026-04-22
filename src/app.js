@@ -1,13 +1,16 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const authRutas = require('./rutas/authRutas');
+const errorMiddleware = require('./middlewares/errorMiddleware');
 require('dotenv').config();
+
 
 const app = express();
 // Para que el servidor entienda datos en formato JSON
 app.use(express.json());
 app.use('/api/auth', authRutas);
 // Verificar que el servidor funciona
+app.use(errorMiddleware);
 
 mongoose.connect(process.env.MONGODB_URI)
     .then(() => console.log('Conexión exitosa a MongoDB Atlas'))
