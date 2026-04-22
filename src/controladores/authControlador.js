@@ -38,8 +38,8 @@ exports.iniciarSesion = async (req, res) => {
         const { email, password } = req.body;
 
         // Buscar al usuario por email
-        const user = await usuario.findOne({ email }); 
-        
+        const user = await usuario.findOne({ email });
+
         if (!user) {
             return res.status(400).json({ msg: 'Credenciales inválidas' });
         }
@@ -56,9 +56,9 @@ exports.iniciarSesion = async (req, res) => {
         };
 
         jwt.sign(
-            payload, 
-            process.env.JWT_SECRET, 
-            { expiresIn: '1h' }, 
+            payload,
+            process.env.JWT_SECRET,
+            { expiresIn: '1h' },
             (err, token) => {
                 if (err) throw err;
                 res.json({ token }); //Token generado
@@ -69,4 +69,16 @@ exports.iniciarSesion = async (req, res) => {
         console.error(error);
         res.status(500).send('Error en el servidor');
     }
+
+    // Obtener usuario autenticado
+    exports.usuarioAutenticado = async (req, res) => {
+        try {
+            // Buscamos al usuario por ID, pero usamos .select('-password') para no enviar la contraseña 
+            const usuario = await usuario.findById(req.usuario.id).select('-password');
+            res.json({ usuario });
+        } catch (error) {
+            console.error(error);
+            res.status(500).send('Error al obtener el perfil');
+        }
+    };
 };
