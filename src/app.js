@@ -3,8 +3,16 @@ const mongoose = require('mongoose');
 const authRutas = require('./rutas/authRutas');
 const errorMiddleware = require('./middlewares/errorMiddleware');
 const helmet = require('helmet');
+const articuloRoutes = require('./routes/articuloRoutes');
+const gadgetRoutes = require('./routes/gadgetRoutes');
 const cors = require('cors');
 require('dotenv').config();
+
+
+
+
+app.use('/api/articulos', articuloRoutes);
+app.use('/api/gadgets', gadgetRoutes);
 
 //Seguridad de Infraestructura
 app.use(helmet()); // Ayuda a proteger de ataques web conocidos 
