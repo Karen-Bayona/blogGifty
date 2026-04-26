@@ -1,4 +1,4 @@
-const Articulo = require('../models/Articulo');
+const articulo = require('../models/articulo');
 
 // Crear
 exports.crearArticulo = async (req, res) => {
