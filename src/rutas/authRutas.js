@@ -4,7 +4,7 @@ const authControlador = require('../controladores/authControlador');
 const authMiddleware = require('../middlewares/authMiddleware');
 
 // Registro
-router.post('/registro', authControlador.registrarUsuario);
+router.post('/registrar', authControlador.registrarUsuario);
 
 // Login
 router.post('/login', authControlador.iniciarSesion);
