@@ -30,7 +30,7 @@ app.get('/', (req, res) => {
     res.send('Bienvenida a la API de Gifty');
 });
 
-// 6. Manejo de errores (Siempre al final)
+// 6. Manejo de errores 
 app.use(errorMiddleware);
 
 // 7. Encender servidor
