@@ -10,7 +10,7 @@ require('dotenv').config();
 
 const app = express(); // 1. Primero inicializamos la app
 
-// 2. Middlewares de seguridad y formato (Antes de las rutas)
+// 2. Middlewares de seguridad y formato 
 app.use(helmet());
 app.use(cors());
 app.use(express.json()); 
