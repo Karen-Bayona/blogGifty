@@ -1,46 +1,40 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const authRutas = require('./rutas/authRutas');
+const articuloRoutes = require('./rutas/articuloRoutes');
+const gadgetRoutes = require('./rutas/gadgetRoutes');
 const errorMiddleware = require('./middlewares/errorMiddleware');
 const helmet = require('helmet');
-const articuloRoutes = require('./routes/articuloRoutes');
-const gadgetRoutes = require('./routes/gadgetRoutes');
 const cors = require('cors');
 require('dotenv').config();
 
+const app = express(); // 1. Primero inicializamos la app
 
+// 2. Middlewares de seguridad y formato (Antes de las rutas)
+app.use(helmet());
+app.use(cors());
+app.use(express.json()); 
 
-
-app.use('/api/articulos', articuloRoutes);
-app.use('/api/gadgets', gadgetRoutes);
-
-//Seguridad de Infraestructura
-app.use(helmet()); // Ayuda a proteger de ataques web conocidos 
-app.use(cors());   // Permite que aplicaciones externas se conecten
-
-conectarDB();
-app.use(express.json());
-
-const app = express();
-
-// Para que el servidor entienda datos en formato JSON
-app.use(express.json());
-
-// Verificar que el servidor funciona
-app.use('/api/auth', authRutas);
-
-app.use(errorMiddleware);
-
+// 3. Conexión a la Base de Datos
 mongoose.connect(process.env.MONGODB_URI)
     .then(() => console.log('Conexión exitosa a MongoDB Atlas'))
     .catch((error) => console.error('Error al conectar a MongoDB:', error));
 
+// 4. Definición de Rutas
+app.use('/api/auth', authRutas);
+app.use('/api/articulos', articuloRoutes);
+app.use('/api/gadgets', gadgetRoutes);
+
+// 5. Ruta de bienvenida
 app.get('/', (req, res) => {
     res.send('Bienvenida a la API de Gifty');
 });
 
-const PORT = process.env.PORT || 3000;
+// 6. Manejo de errores (Siempre al final)
+app.use(errorMiddleware);
 
+// 7. Encender servidor
+const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
     console.log(`Servidor activo en: http://localhost:${PORT}`);
 });
