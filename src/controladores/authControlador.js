@@ -2,13 +2,12 @@ const usuario = require('../modelos/usuario');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 
-
-//Registrar Usuario
+// Registrar Usuario
 exports.registrarUsuario = async (req, res) => {
     try {
         const { nombre, email, password } = req.body;
 
-        //Verificar si el usuario ya existe 
+        // Verificar si el usuario ya existe 
         let usuarioExistente = await usuario.findOne({ email });
         if (usuarioExistente) {
             return res.status(400).json({ msg: 'El usuario ya existe' });
@@ -17,11 +16,11 @@ exports.registrarUsuario = async (req, res) => {
         // Crear el nuevo usuario
         const nuevoUsuario = new usuario({ nombre, email, password });
 
-        // 3. Encriptar la contraseña
+        // Encriptar la contraseña (Seguridad de Karen Bayona)
         const salt = await bcrypt.genSalt(10);
         nuevoUsuario.password = await bcrypt.hash(password, salt);
 
-        // 4. Guardar en la BD
+        // Guardar en la BD
         await nuevoUsuario.save();
 
         res.status(201).json({ msg: 'Usuario creado exitosamente con contraseña segura' });
@@ -32,7 +31,7 @@ exports.registrarUsuario = async (req, res) => {
     }
 };
 
-// Login
+// Login (Entrega JWT)
 exports.iniciarSesion = async (req, res) => {
     try {
         const { email, password } = req.body;
@@ -47,6 +46,7 @@ exports.iniciarSesion = async (req, res) => {
             return res.status(400).json({ msg: 'Credenciales inválidas' });
         }
 
+        // Generar el Token con Payload extendido
         const payload = {
             usuario: {
                 id: user.id,
@@ -71,10 +71,9 @@ exports.iniciarSesion = async (req, res) => {
     }
 };
 
-// Obtener usuario autenticado 
+// Obtener usuario autenticado
 exports.usuarioAutenticado = async (req, res) => {
     try {
-        // Usamos el modelo 'usuario' importado arriba
         const userLogueado = await usuario.findById(req.usuario.id).select('-password');
         res.json({ usuario: userLogueado });
     } catch (error) {

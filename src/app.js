@@ -1,9 +1,10 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const authRutas = require('./rutas/authRutas');
-const articuloRoutes = require('./rutas/articuloRoutes');
-const gadgetRoutes = require('./rutas/gadgetRoutes');
+const articuloRoutes = require('./rutas/articuloRoutes'); // Verifica que el archivo se llame así exactamente
+// const gadgetRoutes = require('./rutas/gadgetRoutes'); // <--- COMÉNTALA con // porque no aparece en tu imagen
 const errorMiddleware = require('./middlewares/errorMiddleware');
+// ... resto del código igual
 const helmet = require('helmet');
 const cors = require('cors');
 require('dotenv').config();
@@ -21,9 +22,9 @@ mongoose.connect(process.env.MONGODB_URI)
     .catch((error) => console.error('Error al conectar a MongoDB:', error));
 
 // 4. Definición de Rutas
-app.use('/api/auth', authRutas);
-app.use('/api/articulos', articuloRoutes);
-app.use('/api/gadgets', gadgetRoutes);
+app.use('/api/authRutas', authRutas);
+app.use('/api/articulo', articuloRoutes);
+//app.use('/api/gadget', gadgetRoutes);
 
 // 5. Ruta de bienvenida
 app.get('/', (req, res) => {
