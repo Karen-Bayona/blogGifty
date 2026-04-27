@@ -6,7 +6,7 @@ const jwt = require('jsonwebtoken');
 //Registrar Usuario
 exports.registrarUsuario = async (req, res) => {
     try {
-        const { email, password } = req.body;
+        const { nombre, email, password } = req.body;
 
         //Verificar si el usuario ya existe 
         let usuarioExistente = await usuario.findOne({ email });
@@ -15,7 +15,7 @@ exports.registrarUsuario = async (req, res) => {
         }
 
         // Crear el nuevo usuario
-        const nuevoUsuario = new usuario({ email, password });
+        const nuevoUsuario = new usuario({ nombre, email, password });
 
         // 3. Encriptar la contraseña
         const salt = await bcrypt.genSalt(10);
@@ -47,7 +47,13 @@ exports.iniciarSesion = async (req, res) => {
             return res.status(400).json({ msg: 'Credenciales inválidas' });
         }
 
-        const payload = { usuario: { id: user.id } };
+        const payload = {
+            usuario: {
+                id: user.id,
+                nombre: user.nombre,
+                rol: user.rol
+            }
+        };
 
         jwt.sign(
             payload,
@@ -63,7 +69,7 @@ exports.iniciarSesion = async (req, res) => {
         console.error(error);
         res.status(500).send('Error en el servidor');
     }
-}; 
+};
 
 // Obtener usuario autenticado 
 exports.usuarioAutenticado = async (req, res) => {
