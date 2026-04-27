@@ -1,4 +1,4 @@
-const articulo = require('../models/articulo');
+const Articulo = require('../models/articulo');
 
 // Crear
 exports.crearArticulo = async (req, res) => {
@@ -34,7 +34,12 @@ exports.actualizarArticulo = async (req, res) => {
 // Eliminar
 exports.eliminarArticulo = async (req, res) => {
     try {
-        await Articulo.findByIdAndDelete(req.params.id);
+        const articuloEliminado = await Articulo.findByIdAndDelete(req.params.id);
+        
+        if (!articuloEliminado) {
+            return res.status(404).json({ mensaje: "El artículo no existe" });
+        }
+
         res.json({ mensaje: "Artículo eliminado correctamente" });
     } catch (error) {
         res.status(400).json({ error: "Error al eliminar" });
